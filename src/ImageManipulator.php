@@ -49,19 +49,16 @@ class ImageManipulator
         foreach ($conversions as $conversion) {
             $path = $media->getPath($conversion);
 
-            $filesystem = $media->filesystem();
-
-            if ($onlyIfMissing && $filesystem->exists($path)) {
+            if ($onlyIfMissing && $media->filesystem()->exists($path)) {
                 continue;
             }
 
             $converter = $this->conversionRegistry->get($conversion);
 
-            $image = $converter($this->imageManager->make(
-                $filesystem->readStream($media->getPath())
-            ));
-
-            $filesystem->put($path, $image->stream());
+            $image = $converter($this->imageManager->make($media->getFullPath()));
+            
+            
+            $media->filesystem()->put($path, $image->stream());
         }
     }
 }
